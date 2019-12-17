@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <title>Squish Grapes</title>
+	<link href="css/game.css" rel="stylesheet" />
+	<script src="jquery-3.4.1.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+	
+	<script>
+	
+	var scoreEnabled = true;
+	var score = 0;
+	var time_left = 30;
+	var clock;
+	var count = 0;
+	var character;
+	
+	$(document).ready( function() {
+	
+	
+	
+		//Retry button disabled on load
+		$("#retry_button").attr("disabled", true);
+	
+		//Start button starts game on click, disables on click.
+		$('#start_button').click(function(){
+		start();
+		
+		var audio = new Audio('SuperCircus.mp3');
+		audio.play();
+	
+		$('#gamespace').css("background-color", "green");
+		
+		document.getElementById("gamespace").style.cursor = "grab";
+		//document.body.style.cursor = "Hammer.cur";
+		
+		
+		$("#score").html("Start Squishin'!");
+		
+		
+		//increments score when clicked
+		$('#gamespace').on("click",'img',function(){  //increments the score when clicked
+		var audio = new Audio('Splat.mp3');
+		audio.play();
+		score++;
+		$("#score").text(score + ' squishes');
+		
+		$(this).effect("explode"); });
+		}); 
+		
+		//Retry button refreshes page on click.
+		$('#retry_button').click(function(){
+		window.location.reload()
+		}); 
+	}); 
+
+
+	function start() {
+	addMole();  //adds mole to screen
+	$("#start_button").attr("disabled", true); //disables button after click to prevent cheating
+	$('#gamespace').css("background-color", "brown");
+	$('#timer').show(); //displays timer
+	updateTimer();
+	removeMole();
+	
+}
+	
+	function addMole() {
+		var xPos = randomXAxis();
+		var yPos = randomYAxis();
+		$("#gamespace").append('<img src="img/grapes.png" style="top:'+xPos+'px; left:'+yPos+'px;" id="img'+count+'"/>');
+		var time = Math.floor(Math.random() * 2000);
+		moleClock = setTimeout(addMole, time);
+		count++
+	}
+	
+	function removeMole(){
+	
+	var images = document.getElementsByTagName('img');
+    images[0].parentNode.removeChild(images[0]);
+		var removeTime = Math.floor(Math.random() * 2000);
+		removeMoleClock = setTimeout(removeMole, 1500);
+	}
+	
+function randomYAxis() {
+	var yPos = Math.floor(Math.random() * 555);
+	return yPos }
+	
+	function randomXAxis() {
+	var xPos = Math.floor(Math.random() * 300);
+	return xPos }
+	
+	
+	//updates the timer every 1 second, decrementing by 1.
+	function updateTimer() {
+	$("#timer").show();//displays timer
+	$("#timer").html(time_left + " seconds left");
+	clock = setTimeout("updateTimer()",1000);
+	time_left-=1
+	if (time_left < 0) {
+	removeAllImages();
+	scoreEnabled = false;
+	clearTimeout(clock);
+	clearTimeout(moleClock);
+	$('#gamespace').css("background-color", "black");
+	$('body').css("background-color", "black");
+	$('html').css("background-color", "black");
+	alert("Great Job, you squished " + score + " Grapes!");
+	$("#retry_button").attr("disabled", false);
+	}
+	
+	function removeAllImages () {
+	var images = document.getElementsByTagName('img');
+	while(images.length > 0) {
+    images[0].parentNode.removeChild(images[0]); }
+	
+	 
+		}
+	}
+	
+	</script>
+    
+  </head>
+  <body>
+
+	<div id="content">
+
+		<h1>Squish Grapes</h1>
+		
+		<p>After clicking "start", you will have 30 seconds to Squish
+		as many grapes as you can. The grapes appear randomly so be ready! </p>
+		
+		<div id="controls">
+			<span id="score">Ready?</span>
+			<button type="button" id="start_button">Start!</button>
+			<button type="button" id="retry_button">Retry</button>
+		</div>
+		
+		<div id="timer">30 seconds left</div>
+		
+		</div>
+		
+		<div id="gamespace">
+		
+			
+		</div>
+		
+	</div>
+  </body>
+</html>
